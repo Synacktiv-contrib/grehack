@@ -1,0 +1,1 @@
+You can read the full write-up on Synacktiv's blog at 

@@ -1,0 +1,70 @@
+Micro-probing attack
+---
+
+# Context
+
+While attacks against cryptographic algoritms are becoming more and more
+difficult to apply to real-world systems, a family of attacks is particularly
+devastating against their implementations: side-channel attacks. In fact,
+they are even more devastating against embedded systems because of the
+diverse attack vectors available (power consumption, electromagnetic
+fluctuations, noise emission, ...) and also because their circuits may be more exposed
+than other systems, thus making probing easier.
+
+Shielding techniques have already been investigated but
+it may be too costly for an embedded systems to be protected against all the
+different side-channel attacks. To reduce this cost, we will create a system
+that require a perfect shield only on two small parts of the circuit 
+manipulating the secret values: an input encoder and an output decoder.
+
+# General approach
+
+The input encoder splits each input value in multiple shares such that the
+knowledge of all the shares is needed to recover the original value.
+The output decoder agregates multiple shares into only one: the expected 
+output of the circuit.
+
+The main problem is to construct a circuit between the input encoder and
+output decoder that performs the wanted operation on the inputs while ensuring
+that an attacker with limited resources cannot recover any information on the
+inputs or the output.
+
+# Our approach
+
+In our model, the attacker cannot probe more than d intermediate values. In
+our implementation d = 4. The input encoder is described in the function
+'sharing'. The output decoder is the 'xor' function.
+
+Every boolean functions can be implemented as a circuit of AND and XOR gates.
+It is easy to perform a secure XOR (because of its
+linearity), thus we will focus on the AND (implemented in `secure_and`)
+between two bits a and b resulting in c.
+
+The algorithm is the following:
+
+- Encode a in d+1 shares called a_i;
+- Encode b in d+1 shares called b_i;
+- Compute each a_i&b_j, called alpha_i,j;
+- Compute the d+1 shares of c (called c_i) by XORing the alpha_i,j;
+- Decode c from the c_i.
+
+# Challenge
+
+Each bit of the flag is ANDed with a bit of a constant mask.
+You can probe any intermediate values: a_i, b_i,
+alpha_i,j, c_i or the intermediate values in the c_i computation. For example,
+c_0 is computed in d+1 steps (thus, d+1 intermediate values that can be
+probed): 
+
+- c_0,0 = alpha_0,0
+- c_0,1 = alpha_0,0 + alpha_1,0
+- c_0,2 = alpha_0,0 + alpha_1,0 + alpha_2,0
+- c_0,3 = alpha_0,0 + alpha_1,0 + alpha_2,0 + alpha_3,0
+- c_0,4 = alpha_0,0 + alpha_1,0 + alpha_2,0 + alpha_3,0 + alpha_0,1 = c_0
+
+The maximum number of probes you can have on the circuit simultaneously is
+d = 4. For each `secure_and` call the random values used in the encoder of a and 
+b are refreshed.
+
+Use `backend.py` to understand what the circuit is doing and use
+`nc chohzatheeghahwoesus.challenge.grehack.fr. 2341` to probe it.

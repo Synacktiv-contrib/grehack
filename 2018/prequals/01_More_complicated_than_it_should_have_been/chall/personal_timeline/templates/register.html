@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="u-1 form-box">
+    <div class="l-box">
+        <h2>Register</h2>
+        <form class="pure-form" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+            </fieldset>
+            <button class="pure-button" type="submit">Register</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

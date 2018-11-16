@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="u-1">
+    <div class="l-box">
+        {% if timeline_username == user.username %}
+        <h2>Your personal timeline</h2>
+        <div class="form-box">
+            <form class="pure-form" method="post">
+                {% csrf_token %}
+                <fieldset class="pure-group">
+                    <textarea class="pure-input-1" placeholder="Your thoughts…" name="message" required></textarea>
+                </fieldset>
+
+                <button type="submit" class="pure-button pure-input-1-2 pure-button-primary">Post</button>
+            </form>
+        </div>
+        {% else %}
+        <h2>Timeline of {{ timeline_username }}</h2>
+        {% endif %}
+
+        {% for event in events %}
+            <div class="event">
+                <span class="when">{{ event.posted }}</span>
+                <p class="message">
+                    {{ event.message }}
+                </p>
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}
+
